@@ -26,7 +26,6 @@ if not openai_key and st:
         pass
 
 if not openai_key:
-    
     print(
         "Warning: OpenAI API key not found. Please set it in Streamlit secrets or as an environment variable.",
         file=sys.stderr
@@ -45,34 +44,46 @@ CHUNK_SIZE = 2500
 
 def get_llm(model_name: str, temperature: float = 0.1):
     """Initializes and returns a ChatOpenAI instance."""
-    if not openai_key:
+    api_key = os.getenv("OPENAI_API_KEY")
+    if not api_key:
         raise EnvironmentError("OpenAI API key is not set.")
     return ChatOpenAI(
         model=model_name,
         temperature=temperature,
         request_timeout=90,
-        max_retries=2
+        max_retries=2,
+        api_key=api_key  # Explicitly pass the API key
     )
 
-# Use a fast, cheaper model for chunk-level extraction and simple writing tasks
-try:
-    llm_extractor = get_llm("gpt-4o-mini")
-except EnvironmentError as e:
-    if st:
-        st.error(e)
-    else:
-        print(e, file=sys.stderr)
-    llm_extractor = None
+# Initialize LLMs lazily - only when actually needed
+llm_extractor = None
+llm_assessor = None
 
-# Use a more powerful model for final assessment and synthesis
-try:
-    llm_assessor = get_llm("gpt-4o", 0.2)
-except EnvironmentError as e:
-    if st:
-        st.error(e)
-    else:
-        print(e, file=sys.stderr)
-    llm_assessor = None
+def get_extractor_llm():
+    """Get or create the extractor LLM instance."""
+    global llm_extractor
+    if llm_extractor is None:
+        try:
+            llm_extractor = get_llm("gpt-4o-mini")
+        except EnvironmentError as e:
+            if st:
+                st.error(str(e))
+            else:
+                print(str(e), file=sys.stderr)
+    return llm_extractor
+
+def get_assessor_llm():
+    """Get or create the assessor LLM instance."""
+    global llm_assessor
+    if llm_assessor is None:
+        try:
+            llm_assessor = get_llm("gpt-4o", 0.2)
+        except EnvironmentError as e:
+            if st:
+                st.error(str(e))
+            else:
+                print(str(e), file=sys.stderr)
+    return llm_assessor
 
 
 # --- Prompt Templates ---
@@ -304,7 +315,7 @@ def extract_json_from_text(text: str) -> str:
         return text[start:end+1]
     
     print(f"Warning: Could not find JSON in text: {text[:200]}...")
-    return "{}" # Return empty JSON object as a fallback
+    return "{}"
 
 def chunk_text_intelligently(text: str, max_chars: int = CHUNK_SIZE) -> List[str]:
     """Split text into chunks, trying to keep conversations intact."""
@@ -324,12 +335,11 @@ def chunk_text_intelligently(text: str, max_chars: int = CHUNK_SIZE) -> List[str
         if not line:
             continue
             
-        line_len = len(line) + 1  # +1 for newline
+        line_len = len(line) + 1
         
-        # If adding this line exceeds max, AND the chunk is not empty, save chunk
         if (current_length + line_len > max_chars and current_chunk):
             chunks.append('\n'.join(current_chunk))
-            current_chunk = [line]  # Start new chunk with current line
+            current_chunk = [line]
             current_length = line_len
         else:
             current_chunk.append(line)
@@ -344,13 +354,8 @@ def analyze_conversation_metrics(transcript_text: str) -> dict:
     """Analyze conversation metrics from transcript."""
     lines = transcript_text.split('\n')
     
-    # Use speaker names from the JSON structure if possible, otherwise parse
-    mentor_lines = []
-    student_lines = []
-    
-    # Try to find distinct speaker names
     speakers = {}
-    for line in lines[:50]: # Sample first 50 lines
+    for line in lines[:50]:
         if ':' in line:
             speaker = line.split(':', 1)[0].strip().lower()
             speakers[speaker] = speakers.get(speaker, 0) + 1
@@ -361,7 +366,6 @@ def analyze_conversation_metrics(transcript_text: str) -> dict:
     student_name = "student"
     
     if len(sorted_speakers) >= 2:
-        # Assume the one who speaks more is the mentor
         mentor_name = sorted_speakers[0][0]
         student_name = sorted_speakers[1][0]
     elif len(sorted_speakers) == 1:
@@ -373,17 +377,15 @@ def analyze_conversation_metrics(transcript_text: str) -> dict:
     for line in lines:
         line_lower = line.strip().lower()
         if line_lower.startswith(mentor_name + ':'):
-            mentor_lines.append(line)
             mentor_words += len(line.split(' ', 1)[-1].split())
         elif line_lower.startswith(student_name + ':'):
-            student_lines.append(line)
             student_words += len(line.split(' ', 1)[-1].split())
 
     total_words = mentor_words + student_words
     return {
         "mentor_talk_ratio": mentor_words / total_words if total_words else 0.5,
         "student_talk_ratio": student_words / total_words if total_words else 0.5,
-        "total_exchanges": len(mentor_lines) + len(student_lines)
+        "total_exchanges": len(lines)
     }
 
 @retry(
@@ -395,7 +397,8 @@ def analyze_single_chunk(args: Tuple[int, str, str]) -> Optional[dict]:
     chunk_idx, chunk, guidelines = args
     
     try:
-        if not llm_extractor:
+        llm = get_extractor_llm()
+        if not llm:
             raise EnvironmentError("Extractor LLM not initialized.")
             
         prompt = EXTRACTOR_PROMPT_TEMPLATE.format(
@@ -403,7 +406,7 @@ def analyze_single_chunk(args: Tuple[int, str, str]) -> Optional[dict]:
             guidelines=guidelines
         )
         
-        response = llm_extractor.invoke(prompt)
+        response = llm.invoke(prompt)
         analysis_text = response.content if hasattr(response, 'content') else str(response)
         
         json_text = extract_json_from_text(analysis_text)
@@ -441,7 +444,6 @@ def deep_analyze_chunks(chunks: List[str], guidelines: str) -> List[dict]:
             for args in args_list
         }
         
-        # Use st.progress if available
         progress_bar = None
         if st:
             progress_bar = st.progress(0, "Analyzing transcript chunks...")
@@ -459,7 +461,7 @@ def deep_analyze_chunks(chunks: List[str], guidelines: str) -> List[dict]:
                 progress_bar.progress(progress, f"Analyzing transcript chunks... {i+1}/{len(chunks)}")
         
         if progress_bar:
-            progress_bar.empty() # Clear progress bar
+            progress_bar.empty()
     
     results.sort(key=lambda x: x.get("chunk_index", 0))
     return results
@@ -475,7 +477,8 @@ def generate_final_assessment(chunk_analyses: List[dict], conversation_metrics: 
         all_violations.extend(analysis.get("guideline_violations", []) or [])
 
     try:
-        if not llm_assessor:
+        llm = get_assessor_llm()
+        if not llm:
             raise EnvironmentError("Assessor LLM not initialized.")
             
         prompt = FINAL_ASSESSOR_PROMPT_TEMPLATE.format(
@@ -484,19 +487,17 @@ def generate_final_assessment(chunk_analyses: List[dict], conversation_metrics: 
             violations=json.dumps(all_violations, indent=2)
         )
         
-        response = llm_assessor.invoke(prompt)
+        response = llm.invoke(prompt)
         response_text = response.content if hasattr(response, 'content') else str(response)
         
         json_text = extract_json_from_text(response_text)
         final_assessment = json.loads(json_text)
         
-        # Add aggregated raw data for reference
         final_assessment["raw_data"] = {
             "positive_behaviors": all_positive_behaviors,
             "violations": all_violations
         }
         
-        # Calculate overall score (0-100 scale)
         scores = final_assessment.get("scores", {})
         avg_score_10 = (
             scores.get("professionalism", 5) + 
@@ -510,7 +511,6 @@ def generate_final_assessment(chunk_analyses: List[dict], conversation_metrics: 
         
     except Exception as e:
         print(f"Error in final assessment: {str(e)}")
-        # Fallback to a structured error
         return {
             "overall_summary": "Failed to generate final assessment.",
             "scores": {
@@ -534,7 +534,8 @@ def generate_session_checklist(
 ) -> dict:
     """Generate a session checklist using LLM for decision making."""
     try:
-        if not llm_extractor:
+        llm = get_extractor_llm()
+        if not llm:
             raise EnvironmentError("Extractor LLM not initialized.")
             
         prompt = CHECKLIST_PROMPT_TEMPLATE.format(
@@ -543,7 +544,7 @@ def generate_session_checklist(
             violations=json.dumps(all_violations, indent=2)
         )
         
-        response = llm_extractor.invoke(prompt)
+        response = llm.invoke(prompt)
         response_text = response.content if hasattr(response, 'content') else str(response)
         
         json_text = extract_json_from_text(response_text)
@@ -555,14 +556,12 @@ def generate_session_checklist(
         
         return {
             "checklist": checklist_items,
-            # "checklist_score" removed
             "total_items": len(checklist_items),
             "passed_items": yes_count
         }
         
     except Exception as e:
         print(f"Error generating checklist with LLM: {str(e)}")
-        # Fallback to default checklist
         default_checklist = [
             {"question": "Did mentor have camera feed with Virtual Background or Blur background?", "answer": "UNCLEAR", "explanation": f"Error: {str(e)}"},
             {"question": "Was there any network issues or background noise ?", "answer": "UNCLEAR", "explanation": "Error in evaluation"},
@@ -573,7 +572,6 @@ def generate_session_checklist(
             {"question": "Commitment taken from student (On their learning time, weekly review of their own progress)", "answer": "UNCLEAR", "explanation": "Error in evaluation"},
             {"question": "Did the mentor summarize the session, set expectations, and take clear commitments from the student on specific milestones?", "answer": "UNCLEAR", "explanation": "Error in evaluation"},
             {"question": "Did mentor said anything negative about AV or its courses / Has mentor shared some personal details?", "answer": "UNCLEAR", "explanation": "Error in evaluation"}]
-        # "checklist_score" removed
         return {
             "checklist": default_checklist,
             "total_items": len(default_checklist),
@@ -588,7 +586,6 @@ def generate_feedback_email(mentor_name: str, assessment: dict) -> str:
         "Gave clear, practical technical advice."
     ]
     
-    # Use 'key_improvements' from the new assessment structure
     improvements = assessment.get("key_improvements", [])
     seen_titles = set()
     structured_issues = []
@@ -625,7 +622,6 @@ def extract_mentor_name(transcript_data: Any, transcript_text: str) -> str:
     """Extract mentor name from transcript."""
     exclude_names = ['student', 'unknown', '', 'introduction']
     
-    # 1. Try from JSON data first (most reliable)
     if isinstance(transcript_data, list):
         names = [
             item.get('speaker_name', '').strip() 
@@ -637,12 +633,10 @@ def extract_mentor_name(transcript_data: Any, transcript_text: str) -> str:
             if n and n.lower() not in exclude_names and len(n.split()) < 4
         ]
         if mentor_candidates:
-            # Assume mentor speaks most
             freq = {name: names.count(name) for name in mentor_candidates}
             if freq:
                 return max(freq.items(), key=lambda x: x[1])[0]
     
-    # 2. Try parsing from text as fallback
     lines = transcript_text.strip().split('\n')[:20]
     candidates = {}
     for line in lines:
@@ -653,7 +647,7 @@ def extract_mentor_name(transcript_data: Any, transcript_text: str) -> str:
     if candidates:
         return max(candidates.items(), key=lambda x: x[1])[0]
     
-    return "Mentor" # Default fallback
+    return "Mentor"
 
 # --- Main Orchestrator ---
 
@@ -665,7 +659,8 @@ def process_transcript_enhanced(
 ) -> dict:
     """Main function to process transcript and generate comprehensive review."""
     
-    if not llm_extractor or not llm_assessor:
+    # Verify LLMs can be initialized
+    if not get_extractor_llm() or not get_assessor_llm():
         return {
             "success": False,
             "error": "LLM clients are not initialized. Check API key.",
@@ -673,7 +668,6 @@ def process_transcript_enhanced(
         }
         
     try:
-        # 1. Load transcript
         with open(transcript_path, "r", encoding="utf-8") as f:
             transcript_data = json.load(f)
         
@@ -683,38 +677,28 @@ def process_transcript_enhanced(
                 for item in transcript_data
             )
         else:
-            # Fallback for other formats (though example is list)
             transcript_text = transcript_data.get('text', str(transcript_data))
-
         
-        # 2. Extract guidelines
         guidelines = extract_pdf_text(guidelines_path)
-        
-        # 3. Analyze metrics
         conversation_metrics = analyze_conversation_metrics(transcript_text)
         
-        # 4. Chunk and Analyze (Map step)
         chunks = chunk_text_intelligently(transcript_text)
         chunk_analyses = deep_analyze_chunks(chunks, guidelines)
         
-        # 5. Final Assessment (Reduce step)
         if st: st.info("Synthesizing final assessment...")
         final_assessment = generate_final_assessment(chunk_analyses, conversation_metrics)
         
-        # 6. Generate Checklist
         if st: st.info("Generating session checklist...")
         session_checklist = generate_session_checklist(
             final_assessment.get("raw_data", {}).get("positive_behaviors", []),
             final_assessment.get("raw_data", {}).get("violations", []),
-            transcript_text  # Pass the full transcript text
+            transcript_text
         )
         
-        # 7. Generate Email
         if st: st.info("Drafting feedback email...")
         mentor_name = extract_mentor_name(transcript_data, transcript_text)
         email_content = generate_feedback_email(mentor_name, final_assessment)
         
-        # 8. Build final output
         scores = final_assessment.get("scores", {})
         
         output = {
@@ -733,9 +717,7 @@ def process_transcript_enhanced(
                 "professionalism": scores.get("professionalism", 0),
                 "session_flow": scores.get("session_flow", 0),
                 "guideline_compliance": scores.get("overall_guideline_compliance", 0),
-                
             },
-            
             "overall_guideline_assessment": {
                  "overall_score": final_assessment.get("overall_score_100", 0),
                  "professionalism": scores.get("professionalism", 0),
@@ -752,7 +734,6 @@ def process_transcript_enhanced(
             }
         }
         
-        # Save output
         output_path = transcript_path.replace('.json','_guideline_review_v2.json')
         with open(output_path, 'w', encoding='utf-8') as f:
             json.dump(output, f, indent=2, ensure_ascii=False)
@@ -798,7 +779,6 @@ if __name__ == "__main__":
 
     try:
         start_time = time.time()
-        # Get date/time for CLI execution
         now = datetime.datetime.now()
         date_str = now.strftime("%Y-%m-%d")
         time_str = now.strftime("%H:%M:%S")
