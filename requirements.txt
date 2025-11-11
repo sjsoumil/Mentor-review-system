@@ -1,4 +1,4 @@
-streamlit==1.33.0
+streamlit==1.39.0
 langchain-openai==0.1.25
 langchain-core==0.2.38
 openai==1.40.0
