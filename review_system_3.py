@@ -47,12 +47,14 @@ def get_llm(model_name: str, temperature: float = 0.1):
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
         raise EnvironmentError("OpenAI API key is not set.")
+    
+    # Compatible with langchain-openai==0.1.8
     return ChatOpenAI(
-        model=model_name,
+        model_name=model_name,
         temperature=temperature,
         request_timeout=90,
         max_retries=2,
-        api_key=api_key  # Explicitly pass the API key
+        openai_api_key=api_key
     )
 
 # Initialize LLMs lazily - only when actually needed
