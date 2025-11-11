@@ -1,8 +1,9 @@
 streamlit==1.39.0
 langchain-openai==0.1.25
-langchain-core==0.2.38
+langchain-core==0.2.27
 openai==1.40.0
 tiktoken==0.7.0
 PyPDF2==3.0.1
 tenacity==8.2.3
 pydantic==2.8.2
+rich==13.9.4
