@@ -202,15 +202,16 @@ FULL_TRANSCRIPT_TEXT:
 {full_transcript_text}
 
 ---
-SECONDARY SUMMARIES (Context only):
+SECONDARY SUMMARIES (Context only - DO NOT TRUST BLINDLY):
 Positive Behaviors: {positive_behaviors}
 Violations: {violations}
 ---
 
 INSTRUCTIONS:
 1.  **Scan the FULL_TRANSCRIPT_TEXT** to find the answer.
-2.  Answer "YES", "NO", or "UNCLEAR".
-3.  **Provide a COMPREHENSIVE, STRUCTURED EXPLANATION** for each answer.
+2.  **ANTI-HALLUCINATION RULE:** If you cannot find *explicit* evidence in the text, you MUST answer "UNCLEAR". Do not guess. Do not rely on the "Secondary Summaries" if they conflict with the transcript.
+3.  Answer "YES", "NO", or "UNCLEAR".
+4.  **Provide a COMPREHENSIVE, STRUCTURED EXPLANATION** for each answer.
     -   **Do not be brief.** The user wants "bigger summaries" that explain things fully.
     -   **Use Bullet Points** to list specific evidence, questions asked, or topics covered.
     -   **Break down complex answers** (especially for Summary/Expectations) into sub-sections like "Summary:", "Milestones:", "Commitments:".
@@ -218,19 +219,15 @@ INSTRUCTIONS:
 
 **EXAMPLE OF DESIRED OUTPUT STYLE:**
 
-*Question:* "Did the mentor appear well-informed about the student's background...?"
-*Answer:* "YES"
-*Explanation:* "The mentor appeared to be reasonably informed about the student’s background and goals. He acknowledged the HDK program and the student’s request for a session, reviewed the student’s past journey, and offered a tailored roadmap (seven courses and milestones). He asked relevant questions to understand the student’s current status and constraints, such as:
-*   Whether the student had started the course and how to access it (log in and enrollment steps)
-*   The student’s time commitment and a rough timeline (hours per week, six to eight weeks for the initial set)
-*   Whether the course content stays up to date and applicable to current AI developments
-Overall, he combined background context with practical next steps before giving guidance."
-
 *Question:* "Did the mentor summarize the session...?"
 *Answer:* "YES"
-*Explanation:* "Summary and expectations: The mentor recapped the roadmap (seven courses, progression from theory to building AI agents, and the emphasis on staying consistent). He stressed the importance of tracking progress and building a realistic schedule over six weeks.
-Specific milestones and plan: He outlined a clear milestone window (roughly six to eight weeks to finish the seven core courses, with about 12 hours per week).
-Commitments: The mentor offered ongoing support (weekly mentorship calls) and urged the student to start and stay consistent. The student pledged to begin soon."
+*Explanation:* "Summary of session: The mentor identified the core issue as Azeez’s difficulty navigating interviews and needing interview-focused preparation rather than broader course content. The mentor emphasized that the next two months would center on interview readiness.
+Set expectations: The focus would be on mock interviews and improving interview navigation. They outlined topics for practice (Transformers and Rag/LLM) and confirmed that the emphasis would be on interview readiness rather than additional module content.
+Clear commitments and milestones:
+*   Azeez committed to booking and participating in mock interviews (about 30 minutes with feedback).
+*   They planned weekly mock interviews starting next week, with the mentor asking questions on specified topics (Transformers and Rag/LLM) and providing feedback.
+*   The mentor committed to guiding the interview preparation process, including typical questions and how to answer them, and to help Azeez practice navigating interviews effectively.
+Overall, the session included a problem summary, a defined two-month focus, and explicit commitments around ongoing mock interviews and targeted practice."
 
 ---
 
@@ -276,7 +273,7 @@ OUTPUT FORMAT - Complete this JSON structure:
         {{
             "question": "Did the mentor summarize the session, set expectations, and take clear commitments from the student on specific milestones?",
             "answer": "YES/NO/UNCLEAR",
-            "explanation": "Detailed explanation. Break this down into 'Summary', 'Expectations', and 'Commitments' if possible."
+            "explanation": "Detailed explanation. **CRITICAL:** Check the END of the transcript. If the mentor did NOT explicitly summarize or ask for commitments, answer NO. Break this down into 'Summary', 'Expectations', and 'Commitments'."
         }},
         {{
             "question": "Did the mentor maintain a positive and professional tone throughout the session, without sharing negative remarks about AV or its courses?",
