@@ -15,7 +15,6 @@ try:
     if 'openai' in st.secrets and 'api_key' in st.secrets.openai:
         os.environ["OPENAI_API_KEY"] = st.secrets.openai.api_key
     
-    # Removed gcp_service_account block as it's not needed for Excel/GSheets
     
     if not os.getenv("OPENAI_API_KEY"):
         st.error("OpenAI API key not found in Streamlit secrets. Please configure it in the Streamlit Cloud settings.")
@@ -27,7 +26,7 @@ except Exception as e:
 
 # Streamlit page configuration
 st.set_page_config(
-    page_title="Mentor Review System v2",
+    page_title="Mentor Review System",
     page_icon="🎓",
     layout="wide"
 )
@@ -101,7 +100,6 @@ def extract_detailed_scores(result: dict) -> dict:
         "Professionalism": safe_get(scores, "professionalism", default="N/A"),
         "Session Flow": safe_get(scores, "session_flow", default="N/A"),
         "Guideline Compliance": safe_get(scores, "guideline_compliance", default="N/A"),
-        # "Checklist Score" removed
     }
     
     return detailed_scores
@@ -144,7 +142,7 @@ def process_single_file(
     except Exception as e:
         return False, file_name, {"error": str(e)}
 
-# Removed the create_excel_download function
+        return False, file_name, {"error": str(e)}
 
 
 def main():
@@ -177,12 +175,12 @@ def main():
     with st.sidebar:
         st.title("ℹ️ About")
         st.markdown("""
-        **Mentor Review System v2** analyzes mentorship sessions 
+        **Mentor Review System ** analyzes mentorship sessions 
         based on guideline adherence using a multi-step AI process.
         
         ### Features:
-        - **(New)** Evidence-based scoring from a powerful Assessor AI.
-        - **(New)** AI-drafted, context-aware feedback emails.
+        - Evidence-based scoring from a powerful Assessor AI.
+        - AI-drafted, context-aware feedback emails.
         - 📊 Guideline-based scoring (Professionalism, Session Flow, Compliance).
         - ✅ Evidence-based session checklist.
         
@@ -198,7 +196,7 @@ def main():
             st.rerun()
 
     # Main content
-    st.title("🎓 Mentor Review System v2")
+    st.title("🎓 Mentor Review System")
     st.markdown("""
     Upload mentorship session transcripts to generate comprehensive, AI-powered reviews
     based on **Analytics Vidhya mentorship guidelines**.
@@ -218,10 +216,6 @@ def main():
         help="Upload one or more transcript files in JSON format",
         accept_multiple_files=True
     )
-
-    # Initialize date and time in session state - REMOVED
-    # if 'date_str' not in st.session_state: ...
-    # if 'time_str' not in st.session_state: ...
 
     # Step 1: Upload and configure
     if uploaded_files and not st.session_state.get("ready_to_process"):
@@ -363,8 +357,6 @@ def main():
                     comp_score = detailed_scores.get("Guideline Compliance", "N/A")
                     st.metric("Compliance", f"{comp_score}/10" if comp_score != "N/A" else "N/A")
                 
-                # Removed col5 block for Checklist Score
-                
                 st.markdown("---")
                 
                 # Tabs for different sections
@@ -464,15 +456,13 @@ def main():
                         use_container_width=True
                     )
                 
-                # Removed the Google Sheets save block
-                
                 st.markdown("---")
         
         # Reset state
         st.session_state["ready_to_process"] = False
         st.session_state["file_configs"] = {}
         
-        # Removed the Excel Download Button
+        st.session_state["file_configs"] = {}
         
 
 if __name__ == "__main__":
