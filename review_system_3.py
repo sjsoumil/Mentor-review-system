@@ -1,3 +1,4 @@
+
 import os
 import sys
 import json
@@ -194,27 +195,44 @@ OUTPUT FORMAT - Complete this JSON structure:
 """
 
 CHECKLIST_PROMPT_TEMPLATE = """
-You are an auditor for Analytics Vidhya. Your task is to answer these specific questions.
+You are an auditor for Analytics Vidhya. Your task is to answer these specific questions based on the transcript.
 
-**PRIMARY SOURCE OF TRUTH (Read this first and for every question):**
+**PRIMARY SOURCE OF TRUTH:**
 FULL_TRANSCRIPT_TEXT:
 {full_transcript_text}
 
 ---
-SECONDARY SUMMARIES (Use for context only):
-Aggregated Positive Behaviors:
-{positive_behaviors}
-
-Aggregated Violations:
-{violations}
+SECONDARY SUMMARIES (Context only):
+Positive Behaviors: {positive_behaviors}
+Violations: {violations}
 ---
 
 INSTRUCTIONS:
-1.  **You MUST scan the FULL_TRANSCRIPT_TEXT to find the answer for every single question.**
-2.  The secondary summaries are only for context and may be incomplete. Do not rely on them to answer.
-3.  Answer each question with "YES", "NO", or "UNCLEAR".
-4.  Provide a brief explanation based *only* on the provided text evidence from the full transcript.
-5.  **IMPORTANT**: For questions about camera, network, or noise, if it is not explicitly mentioned in the transcript (e.g., "I have camera issues" or "sorry for the noise"), you MUST answer "UNCLEAR". Do not make assumptions.
+1.  **Scan the FULL_TRANSCRIPT_TEXT** to find the answer.
+2.  Answer "YES", "NO", or "UNCLEAR".
+3.  **Provide a COMPREHENSIVE, STRUCTURED EXPLANATION** for each answer.
+    -   **Do not be brief.** The user wants "bigger summaries" that explain things fully.
+    -   **Use Bullet Points** to list specific evidence, questions asked, or topics covered.
+    -   **Break down complex answers** (especially for Summary/Expectations) into sub-sections like "Summary:", "Milestones:", "Commitments:".
+    -   **Tone:** Professional, objective, and evidence-based.
+
+**EXAMPLE OF DESIRED OUTPUT STYLE:**
+
+*Question:* "Did the mentor appear well-informed about the student's background...?"
+*Answer:* "YES"
+*Explanation:* "The mentor appeared to be reasonably informed about the student’s background and goals. He acknowledged the HDK program and the student’s request for a session, reviewed the student’s past journey, and offered a tailored roadmap (seven courses and milestones). He asked relevant questions to understand the student’s current status and constraints, such as:
+*   Whether the student had started the course and how to access it (log in and enrollment steps)
+*   The student’s time commitment and a rough timeline (hours per week, six to eight weeks for the initial set)
+*   Whether the course content stays up to date and applicable to current AI developments
+Overall, he combined background context with practical next steps before giving guidance."
+
+*Question:* "Did the mentor summarize the session...?"
+*Answer:* "YES"
+*Explanation:* "Summary and expectations: The mentor recapped the roadmap (seven courses, progression from theory to building AI agents, and the emphasis on staying consistent). He stressed the importance of tracking progress and building a realistic schedule over six weeks.
+Specific milestones and plan: He outlined a clear milestone window (roughly six to eight weeks to finish the seven core courses, with about 12 hours per week).
+Commitments: The mentor offered ongoing support (weekly mentorship calls) and urged the student to start and stay consistent. The student pledged to begin soon."
+
+---
 
 OUTPUT FORMAT - Complete this JSON structure:
 
@@ -223,47 +241,47 @@ OUTPUT FORMAT - Complete this JSON structure:
         {{
             "question": "Did mentor have camera feed with Virtual Background or Blur background?",
             "answer": "YES/NO/UNCLEAR",
-            "explanation": "Brief explanation (e.g., 'NO: Mentor states 'I have actually some camera issues... don't move my camera'.')"
+            "explanation": "Detailed explanation. If NO, explain what happened. If YES, confirm it was on."
         }},
         {{
             "question": "Was there any network issues or background noise ?",
             "answer": "YES/NO/UNCLEAR",
-            "explanation": "Brief explanation (e.g., 'UNCLEAR: No network issues or noise mentioned in the transcript.')"
+            "explanation": "Detailed explanation. Mention if there were any specific disruptions (e.g., 'A brief screen sharing hiccup around 02:20') or confirm 'No major disruptions reported'."
         }},
         {{
             "question": "Did mentor login on Time?",
             "answer": "YES/NO/UNCLEAR",
-            "explanation": "Brief explanation (e.g., 'NO: Mentor apologized 'sorry for this long delay' at the start.')"
+            "explanation": "Detailed explanation. Cite specific timestamps or apologies for delay if present."
         }},
         {{
             "question": "Did mentor look like he/she knows the student's profile or have asked the same from student?",
             "answer": "YES/NO/UNCLEAR",
-            "explanation": "Brief explanation (e.g., 'YES: The student immediately starts discussing their RAG notebook, implying a follow-up session.')"
+            "explanation": "Detailed explanation. Describe how the mentor demonstrated knowledge of the student's background or what specific questions they asked to learn about it. Use bullet points if they asked multiple questions."
         }},
         {{
             "question": "Did mentor ask students what Challenges they are facing currently?",
             "answer": "YES/NO/UNCLEAR",
-            "explanation": "Brief explanation (e.g., 'YES: The student immediately started explaining their project, which was the challenge.')"
+            "explanation": "Detailed explanation. Quote the specific questions the mentor asked regarding challenges."
         }},
         {{
             "question": "Identify the specific issue/concern by discussing with student (If Technical Session)",
             "answer": "YES/NO/UNCLEAR",
-            "explanation": "Brief explanation (e.g., 'YES: Mentor and student had a deep discussion about RAG metadata filtering, chunking, and prompt engineering.')"
+            "explanation": "Detailed explanation. Summarize the technical discussion and the specific issue identified."
         }},
         {{
             "question": "Commitment taken from student (On their learning time, weekly review of their own progress)",
             "answer": "YES/NO/UNCLEAR",
-            "explanation": "Brief explanation (e.g., 'UNCLEAR: No specific commitments on learning time were mentioned in the text.')"
+            "explanation": "Detailed explanation. Specify exactly what the student committed to (hours per week, specific deadlines, etc.)."
         }},
         {{
             "question": "Did the mentor summarize the session, set expectations, and take clear commitments from the student on specific milestones?",
             "answer": "YES/NO/UNCLEAR",
-            "explanation": "Brief explanation (e.g., 'NO: The session ended after the final topic without a summary.')"
+            "explanation": "Detailed explanation. Break this down into 'Summary', 'Expectations', and 'Commitments' if possible."
         }},
         {{
-            "question": "Did mentor said anything negative about AV or its courses / Has mentor shared some personal details?",
+            "question": "Did the mentor maintain a positive and professional tone throughout the session, without sharing negative remarks about AV or its courses?",
             "answer": "YES/NO/UNCLEAR",
-            "explanation": "Brief explanation (e.g., 'NO: Conversation remained professional and focused on the technical task.')"
+            "explanation": "Detailed explanation. Confirm if the tone was professional and if any negative remarks were made."
         }}
     ]
 }}
@@ -572,7 +590,7 @@ def generate_session_checklist(
             {"question": "Identify the specific issue/concern by discussing with student (If Technical Session)", "answer": "UNCLEAR", "explanation": "Error in evaluation"},
             {"question": "Commitment taken from student (On their learning time, weekly review of their own progress)", "answer": "UNCLEAR", "explanation": "Error in evaluation"},
             {"question": "Did the mentor summarize the session, set expectations, and take clear commitments from the student on specific milestones?", "answer": "UNCLEAR", "explanation": "Error in evaluation"},
-            {"question": "Did mentor said anything negative about AV or its courses / Has mentor shared some personal details?", "answer": "UNCLEAR", "explanation": "Error in evaluation"}]
+            {"question": "Did the mentor maintain a positive and professional tone throughout the session, without sharing negative remarks about AV or its courses?", "answer": "UNCLEAR", "explanation": "Error in evaluation"}]
         return {
             "checklist": default_checklist,
             "total_items": len(default_checklist),
