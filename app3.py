@@ -81,7 +81,7 @@ def format_checklist_display(checklist_data: dict) -> str:
         
         output += f"{emoji} **{question}**\n"
         output += f"**Answer:** {answer}\n"
-        output += f"*{explanation}*\n\n"
+        output += f"{explanation}\n\n"
     
     return output
 
