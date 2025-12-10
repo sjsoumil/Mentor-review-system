@@ -212,22 +212,64 @@ INSTRUCTIONS:
 2.  **ANTI-HALLUCINATION RULE:** If you cannot find *explicit* evidence in the text, you MUST answer "UNCLEAR". Do not guess. Do not rely on the "Secondary Summaries" if they conflict with the transcript.
 3.  Answer "YES", "NO", or "UNCLEAR".
 4.  **Provide a COMPREHENSIVE, STRUCTURED EXPLANATION** for each answer.
-    -   **Do not be brief.** The user wants "bigger summaries" that explain things fully.
-    -   **Use Bullet Points** to list specific evidence, questions asked, or topics covered.
-    -   **Break down complex answers** (especially for Summary/Expectations) into sub-sections like "Summary:", "Milestones:", "Commitments:".
+    -   **Detailed Narrative:** The user wants "bigger summaries" that explain things fully. Do not be brief. Each explanation must be a substantial paragraph (4-5 sentences) followed by bullet points.
+    -   **Structure:** Use **Bold Headers** for key points (e.g., **Roadmap realignment:**, **Short-term milestone:**).
+    -   **Bullet Points:** Use bullet points to list specific evidence, questions asked, or topics covered.
     -   **Tone:** Professional, objective, and evidence-based.
+    -   **Completeness:** Ensure every part of the question is addressed in the explanation. For example, if the question asks about summary, expectations, AND commitments, your explanation MUST cover all three explicitly.
 
-**EXAMPLE OF DESIRED OUTPUT STYLE:**
+**REFERENCE EXAMPLES (FOLLOW THIS STYLE EXACTLY):**
 
-*Question:* "Did the mentor summarize the session...?"
+*Example 1: Challenges & Issues*
+*Question:* "Did the mentor actively inquire about the student's current challenges (technical or otherwise) and help pin point specific issues or concerns?"
 *Answer:* "YES"
-*Explanation:* "Summary of session: The mentor identified the core issue as Azeez’s difficulty navigating interviews and needing interview-focused preparation rather than broader course content. The mentor emphasized that the next two months would center on interview readiness.
-Set expectations: The focus would be on mock interviews and improving interview navigation. They outlined topics for practice (Transformers and Rag/LLM) and confirmed that the emphasis would be on interview readiness rather than additional module content.
-Clear commitments and milestones:
-*   Azeez committed to booking and participating in mock interviews (about 30 minutes with feedback).
-*   They planned weekly mock interviews starting next week, with the mentor asking questions on specified topics (Transformers and Rag/LLM) and providing feedback.
-*   The mentor committed to guiding the interview preparation process, including typical questions and how to answer them, and to help Azeez practice navigating interviews effectively.
-Overall, the session included a problem summary, a defined two-month focus, and explicit commitments around ongoing mock interviews and targeted practice."
+*Explanation:* "Yes. The mentor actively inquired about the learner’s situation and framed concrete issues to address. Examples:
+*   **Asked about current progress and time constraints:** “How long you’ve been doing this course…? I know you had some project work… what should I do to fast track?” and “What can I do in these two months to speed up development?”
+*   **Probed the learner’s context and needs:** Inquired about the learner’s office use cases (RAG for customer feedback), and whether the roadmap needed updating.
+*   **Sought concrete road-map adjustments:** Offered to reorder and tailor the learner’s courses, and suggested which modules to prioritize (e.g., LangGraph first, then advanced LangChain, and then other agents).
+*   **Provided actionable steps:** Recommended specific tools (Wind SERP, VS Code-based tools), highlighted which chapters to skip or focus on, and outlined a concrete sequence to complete two to three courses quickly.
+Overall, the mentor guided the learner with targeted questions and concrete, actionable recommendations to address current challenges and accelerate progress."
+
+*Example 2: Commitments & Follow-up*
+*Question:* "Did the mentor encourage the student to commit to learning goals (e.g., study hours, self-review) and create an actionable follow-up plan?"
+*Answer:* "YES"
+*Explanation:* "Yes. The mentor encouraged a concrete commitment to learning goals and provided an actionable follow-up plan. Key elements:
+*   **Time and effort guidance:** Suggested spending hours per week (e.g., “five hours a week” or “20 hours a week” to speed up progress) and set expectations for coursework completion timeframe.
+*   **Specific next steps:** Recommended finishing 2–3 more courses by the next session and focusing on the top 11 topics, with a reordered roadmap.
+*   **Structured learning order:** Proposed a clear sequence (start with LangGraph/LangChain basics, then move to more advanced or alternative frameworks as needed).
+*   **Regular check-ins:** Offered weekly 30-minute mentorship sessions as an ongoing accountability mechanism.
+*   **Practical application:** Emphasized applying knowledge to real office use cases to reinforce learning and motivation.
+*   **Roadmap action:** Offered to create/reorder the learner’s roadmap and commit to monitoring progress.
+Overall, the guidance was aimed at a tangible, time-bound plan with ongoing mentorship to maintain accountability."
+
+*Example 3: Summary & Expectations*
+*Question:* "Did the mentor summarize the session, set expectations, and take clear commitments from the student on specific milestones?"
+*Answer:* "YES"
+*Explanation:* "Yes. The mentor summarized the session and set clear expectations, aiming to fast-track the learner’s progress. Key commitments and milestones included:
+*   **Roadmap realignment:** The mentor proposed reordering the learner’s roadmap to prioritize practical, in-demand courses (LangChain, LangGraph, etc.) and to focus on building real projects.
+*   **Short-term milestone:** The learner committed to completing 2–3 more courses by next week to accelerate progress.
+*   **Ongoing guidance:** The mentor reinforced access to weekly, 30-minute on-demand mentorship sessions and emphasized applying knowledge to real office use cases.
+*   **Clear next steps:** Finish the top prioritized 11 topics, then progress to more advanced material as planned.
+Overall, the mentor provided a concise summary, set tangible milestones, and secured concrete commitments from the learner."
+
+*Example 4: Background Knowledge*
+*Question:* "Did the mentor appear well-informed about the student's background or ask relevant questions to understand it before offering guidance?"
+*Answer:* "YES"
+*Explanation:* "Yes. The mentor asked several relevant questions to understand the student’s background and needs before offering guidance. Key points:
+*   **Asked about how long the student has been in the course, prior learning, and time availability.**
+*   **Inquired about the student’s current role, employer, and use cases** (e.g., customer feedback, RAG, AI agents) to tailor advice.
+*   **Confirmed which courses had been completed** and what the roadmap currently looked like.
+*   **Verified practical constraints** (e.g., upcoming busy period, planned February/March timelines) to align the pace.
+*   **Probed for specific goals** (fast-tracking learning, applying knowledge to real projects) and readiness to restart focused work.
+Overall, the mentor demonstrated intent to understand the student’s background and objectives before guiding next steps."
+
+*Example 5: Disruptions*
+*Question:* "Were there any disruptions during the session, such as network issues, background noise, or the mentor not logging in on time?"
+*Answer:* "NO" (or specific details if YES)
+*Explanation:* "There were minor audio/clarity issues at the start: the mentor noted low volume and asked to confirm hearing.
+*   There was a name/login mismatch for the learner (the mentor mentioned the login appeared as Rohi, later explained as the learner’s name not being updated due to a personal name issue).
+*   No evidence of significant network outages or the mentor/logging in being delayed; the session proceeded and discussion continued normally.
+*   A small UI/recording note about a roadmap display and a temporary bug in course ordering was mentioned, but it did not disrupt the session flow."
 
 ---
 
@@ -258,7 +300,7 @@ OUTPUT FORMAT - Complete this JSON structure:
         {{
             "question": "Did mentor ask students what Challenges they are facing currently?",
             "answer": "YES/NO/UNCLEAR",
-            "explanation": "Detailed explanation. Quote the specific questions the mentor asked regarding challenges."
+            "explanation": "Detailed explanation. Quote the specific questions the mentor asked regarding challenges. Use bold headers for key points."
         }},
         {{
             "question": "Identify the specific issue/concern by discussing with student (If Technical Session)",
@@ -268,12 +310,12 @@ OUTPUT FORMAT - Complete this JSON structure:
         {{
             "question": "Commitment taken from student (On their learning time, weekly review of their own progress)",
             "answer": "YES/NO/UNCLEAR",
-            "explanation": "Detailed explanation. Specify exactly what the student committed to (hours per week, specific deadlines, etc.)."
+            "explanation": "Detailed explanation. Specify exactly what the student committed to (hours per week, specific deadlines, etc.). Use bold headers for key commitments."
         }},
         {{
             "question": "Did the mentor summarize the session, set expectations, and take clear commitments from the student on specific milestones?",
             "answer": "YES/NO/UNCLEAR",
-            "explanation": "Detailed explanation. **CRITICAL:** Check the END of the transcript. If the mentor did NOT explicitly summarize or ask for commitments, answer NO. Break this down into 'Summary', 'Expectations', and 'Commitments'."
+            "explanation": "Detailed explanation. **CRITICAL:** Check the END of the transcript. If the mentor did NOT explicitly summarize or ask for commitments, answer NO. Break this down into 'Summary', 'Expectations', and 'Commitments' using bold headers and each in separate bullet points."
         }},
         {{
             "question": "Did the mentor maintain a positive and professional tone throughout the session, without sharing negative remarks about AV or its courses?",
@@ -550,9 +592,10 @@ def generate_session_checklist(
 ) -> dict:
     """Generate a session checklist using LLM for decision making."""
     try:
-        llm = get_extractor_llm()
+        # Use Assessor LLM (GPT-4o) for better reasoning on the full transcript
+        llm = get_assessor_llm()
         if not llm:
-            raise EnvironmentError("Extractor LLM not initialized.")
+            raise EnvironmentError("Assessor LLM not initialized.")
             
         prompt = CHECKLIST_PROMPT_TEMPLATE.format(
             full_transcript_text=full_transcript_text,
