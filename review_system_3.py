@@ -212,11 +212,13 @@ INSTRUCTIONS:
 2.  **ANTI-HALLUCINATION RULE:** If you cannot find *explicit* evidence in the text, you MUST answer "UNCLEAR". Do not guess. Do not rely on the "Secondary Summaries" if they conflict with the transcript.
 3.  Answer "YES", "NO", or "UNCLEAR".
 4.  **Provide a COMPREHENSIVE, STRUCTURED EXPLANATION** for each answer.
-    -   **Detailed Narrative:** The user wants "bigger summaries" that explain things fully. Do not be brief. Each explanation must be a substantial paragraph (4-5 sentences) followed by bullet points.
+    -   **Introductory Sentence:** You **MUST** start with "Yes." or "No." followed by a natural, narrative sentence confirming the answer (e.g., "Yes. The mentor summarized the session...").
+    -   **Specific Evidence:** You MUST include specific details from the transcript. Do not just say "the mentor suggested courses"; say "the mentor suggested **LangGraph and LangChain**". Do not just say "the student committed to a timeline"; say "the student committed to **completing 2-3 courses by next week**". Use quotes where appropriate.
     -   **Structure:** Use **Bold Headers** for key points (e.g., **Roadmap realignment:**, **Short-term milestone:**).
     -   **Bullet Points:** Use bullet points to list specific evidence, questions asked, or topics covered.
+    -   **Concluding Sentence:** You **MUST** end with a sentence starting with "Overall," that summarizes the mentor's performance on this specific point. **This is mandatory.**
     -   **Tone:** Professional, objective, and evidence-based.
-    -   **Completeness:** Ensure every part of the question is addressed in the explanation. For example, if the question asks about summary, expectations, AND commitments, your explanation MUST cover all three explicitly.
+    -   **Completeness:** Ensure every part of the question is addressed in the explanation.
 
 **REFERENCE EXAMPLES (FOLLOW THIS STYLE EXACTLY):**
 
@@ -266,10 +268,12 @@ Overall, the mentor demonstrated intent to understand the student’s background
 *Example 5: Disruptions*
 *Question:* "Were there any disruptions during the session, such as network issues, background noise, or the mentor not logging in on time?"
 *Answer:* "NO" (or specific details if YES)
-*Explanation:* "There were minor audio/clarity issues at the start: the mentor noted low volume and asked to confirm hearing.
+*Explanation:* "No. There were no significant disruptions.
+*   There were minor audio/clarity issues at the start: the mentor noted low volume and asked to confirm hearing.
 *   There was a name/login mismatch for the learner (the mentor mentioned the login appeared as Rohi, later explained as the learner’s name not being updated due to a personal name issue).
 *   No evidence of significant network outages or the mentor/logging in being delayed; the session proceeded and discussion continued normally.
-*   A small UI/recording note about a roadmap display and a temporary bug in course ordering was mentioned, but it did not disrupt the session flow."
+*   A small UI/recording note about a roadmap display and a temporary bug in course ordering was mentioned, but it did not disrupt the session flow.
+Overall, the session proceeded smoothly without any major technical or logistical interruptions."
 
 ---
 
