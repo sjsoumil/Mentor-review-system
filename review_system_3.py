@@ -241,29 +241,42 @@ Overall, the mentor guided the learner with targeted questions and concrete, act
 *   **Structured learning order:** Proposed a clear sequence (start with LangGraph/LangChain basics, then move to more advanced or alternative frameworks as needed).
 *   **Regular check-ins:** Offered weekly 30-minute mentorship sessions as an ongoing accountability mechanism.
 *   **Practical application:** Emphasized applying knowledge to real office use cases to reinforce learning and motivation.
-*   **Roadmap action:** Offered to create/reorder the learner’s roadmap and commit to monitoring progress.
+*   **Roadmap action:** Offered to create/reorder the learner's roadmap and commit to monitoring progress.
 Overall, the guidance was aimed at a tangible, time-bound plan with ongoing mentorship to maintain accountability."
 
 *Example 3: Summary & Expectations*
 *Question:* "Did the mentor summarize the session, set expectations, and take clear commitments from the student on specific milestones?"
 *Answer:* "YES"
-*Explanation:* "Yes. The mentor summarized the session and set clear expectations, aiming to fast-track the learner’s progress. Key commitments and milestones included:
-*   **Roadmap realignment:** The mentor proposed reordering the learner’s roadmap to prioritize practical, in-demand courses (LangChain, LangGraph, etc.) and to focus on building real projects.
-*   **Short-term milestone:** The learner committed to completing 2–3 more courses by next week to accelerate progress.
-*   **Ongoing guidance:** The mentor reinforced access to weekly, 30-minute on-demand mentorship sessions and emphasized applying knowledge to real office use cases.
-*   **Clear next steps:** Finish the top prioritized 11 topics, then progress to more advanced material as planned.
-Overall, the mentor provided a concise summary, set tangible milestones, and secured concrete commitments from the learner."
+*Explanation:* "Yes. The mentor summarized the session and set clear expectations, aiming to fast-track the learner's progress.
+
+**Summary:**
+*   The mentor recapped the key discussion points: the learner's current progress in the GenAI course, time constraints due to project work, and the need to fast-track learning.
+*   Summarized the main topics covered: RAG systems, LangChain, LangGraph, AI agents, and the learner's office use cases for customer feedback analysis.
+*   Reviewed the proposed roadmap adjustments to prioritize practical, in-demand courses (LangChain, LangGraph, etc.) and focus on building real projects.
+
+**Expectations:**
+*   The mentor set the expectation that the learner should dedicate **5-20 hours per week** to coursework to make meaningful progress.
+*   Emphasized that the learner should focus on **applying knowledge to real office use cases** rather than just completing courses theoretically.
+*   Set the expectation that the learner would follow the **reordered roadmap** prioritizing the top 11 topics (LangGraph first, then advanced LangChain, then other agent frameworks).
+
+**Commitments:**
+*   **Short-term milestone:** The learner committed to completing **2–3 more courses by next week** to accelerate progress.
+*   **Weekly check-ins:** The learner agreed to attend weekly 30-minute mentorship sessions for ongoing accountability.
+*   **Roadmap completion:** The learner committed to finishing the top prioritized 11 topics before moving to more advanced material.
+*   **Practical application:** The learner agreed to work on real projects using the learned concepts in their office environment.
+
+Overall, the mentor provided a comprehensive summary of the session, set clear and specific expectations for learning pace and application, and secured concrete, time-bound commitments from the learner."
 
 *Example 4: Background Knowledge*
 *Question:* "Did the mentor appear well-informed about the student's background or ask relevant questions to understand it before offering guidance?"
 *Answer:* "YES"
-*Explanation:* "Yes. The mentor asked several relevant questions to understand the student’s background and needs before offering guidance. Key points:
+*Explanation:* "Yes. The mentor asked several relevant questions to understand the student's background and needs before offering guidance. Key points:
 *   **Asked about how long the student has been in the course, prior learning, and time availability.**
-*   **Inquired about the student’s current role, employer, and use cases** (e.g., customer feedback, RAG, AI agents) to tailor advice.
+*   **Inquired about the student's current role, employer, and use cases** (e.g., customer feedback, RAG, AI agents) to tailor advice.
 *   **Confirmed which courses had been completed** and what the roadmap currently looked like.
 *   **Verified practical constraints** (e.g., upcoming busy period, planned February/March timelines) to align the pace.
 *   **Probed for specific goals** (fast-tracking learning, applying knowledge to real projects) and readiness to restart focused work.
-Overall, the mentor demonstrated intent to understand the student’s background and objectives before guiding next steps."
+Overall, the mentor demonstrated intent to understand the student's background and objectives before guiding next steps."
 
 *Example 5: Disruptions*
 *Question:* "Were there any disruptions during the session, such as network issues, background noise, or the mentor not logging in on time?"
@@ -274,6 +287,26 @@ Overall, the mentor demonstrated intent to understand the student’s background
 *   No evidence of significant network outages or the mentor/logging in being delayed; the session proceeded and discussion continued normally.
 *   A small UI/recording note about a roadmap display and a temporary bug in course ordering was mentioned, but it did not disrupt the session flow.
 Overall, the session proceeded smoothly without any major technical or logistical interruptions."
+
+*Example 6: Summary & Expectations (Partial Case)*
+*Question:* "Did the mentor summarize the session, set expectations, and take clear commitments from the student on specific milestones?"
+*Answer:* "PARTIAL/YES" (depending on how many components were fulfilled)
+*Explanation:* "Partially. The mentor set expectations but did not provide a formal summary or secure specific commitments.
+
+**Summary:**
+*   No formal summary was provided at the end of the session. The session ended with the student thanking the mentor and saying goodbye, without the mentor explicitly recapping what was discussed.
+
+**Expectations:**
+*   The mentor set clear expectations about pacing and focus areas throughout the conversation:
+*   **Speeding up the course:** The mentor suggested the student could "limit how many real-world problems you are doing rather than going through all of them" to save time.
+*   **Prioritization guidance:** The mentor recommended that "image generation again will not directly be highly useful for you" and suggested the student could "take image generation at a lower priority."
+*   **Flexible pacing:** The mentor acknowledged that "if you think that in a particular topic you are very comfortable, you can always pace up and take that particular thing much faster."
+*   **Module independence:** The mentor explained that "it doesn't matter which module you are picking first" since the student now understands the backbone.
+
+**Commitments:**
+*   No specific commitments or milestones were established. The student expressed intent to "make my hand dirty" (get hands-on experience) and mentioned wanting to "build one agent," but did not commit to specific deadlines or measurable goals.
+
+Overall, while the mentor provided valuable guidance on pacing and priorities, the session lacked a formal closing summary and concrete student commitments to specific milestones."
 
 ---
 
@@ -299,27 +332,84 @@ OUTPUT FORMAT - Complete this JSON structure:
         {{
             "question": "Did mentor look like he/she knows the student's profile or have asked the same from student?",
             "answer": "YES/NO/UNCLEAR",
-            "explanation": "Detailed explanation. Describe how the mentor demonstrated knowledge of the student's background or what specific questions they asked to learn about it. Use bullet points if they asked multiple questions."
+            "explanation": "Detailed explanation. **CRITICAL:** Provide comprehensive evidence with specific examples and bullet points.
+
+**Required format:**
+*   Start with 'Yes.' or 'No.' followed by a narrative sentence
+*   Provide **3-5 bullet points minimum** with specific questions or statements the mentor made
+*   Use **bold headers** for categories (e.g., **Asked about background:**, **Inquired about goals:**, **Confirmed details:**)
+*   Include actual quotes from the transcript where the mentor asked about or demonstrated knowledge of the student's profile
+*   End with an 'Overall,' sentence summarizing how well the mentor understood the student's background
+
+**Example:**
+*   **Asked about educational background:** 'Quote from mentor'
+*   **Inquired about work experience:** 'Quote from mentor'
+*   **Confirmed current role and objectives:** 'Quote from mentor'"
         }},
         {{
             "question": "Did mentor ask students what Challenges they are facing currently?",
             "answer": "YES/NO/UNCLEAR",
-            "explanation": "Detailed explanation. Quote the specific questions the mentor asked regarding challenges. Use bold headers for key points."
+            "explanation": "Detailed explanation. **CRITICAL:** You MUST provide comprehensive evidence with specific quotes and bullet points. Do NOT give a brief answer.
+
+**Required format:**
+*   Start with 'Yes.' or 'No.' followed by a narrative sentence
+*   Use **bold headers** to categorize different types of challenges discussed (e.g., **Technical Challenges:**, **Time Constraints:**, **Learning Objectives:**)
+*   Provide **3-5 bullet points minimum** with specific quotes from the transcript showing what the mentor asked
+*   Each bullet point must include the actual question or statement the mentor made (in quotes)
+*   End with an 'Overall,' sentence summarizing how the mentor addressed challenges
+
+**Example of what to include:**
+*   **Asked about current progress:** 'Quote from mentor asking about progress'
+*   **Probed specific difficulties:** 'Quote from mentor asking about specific challenges'
+*   **Inquired about constraints:** 'Quote from mentor asking about time/resource limitations'
+
+If NO challenges were discussed, explain what the mentor focused on instead and why no challenges were identified."
         }},
         {{
             "question": "Identify the specific issue/concern by discussing with student (If Technical Session)",
             "answer": "YES/NO/UNCLEAR",
-            "explanation": "Detailed explanation. Summarize the technical discussion and the specific issue identified."
+            "explanation": "Detailed explanation. **CRITICAL:** Provide a comprehensive summary with specific details and bullet points.
+
+**Required format:**
+*   Start with 'Yes.' or 'No.' followed by a narrative sentence
+*   Use **bold headers** to organize the technical issues (e.g., **Technical Challenge:**, **Specific Concern:**, **Root Cause:**)
+*   Provide **2-4 bullet points** describing the specific issue/concern identified
+*   Include quotes or specific details from the discussion
+*   End with an 'Overall,' sentence summarizing the issue and how it was addressed
+
+**Example:**
+*   **Main technical concern:** Description of the primary issue discussed
+*   **Specific problem:** Detailed explanation with quotes
+*   **Context:** Background information that led to this issue"
         }},
         {{
             "question": "Commitment taken from student (On their learning time, weekly review of their own progress)",
             "answer": "YES/NO/UNCLEAR",
-            "explanation": "Detailed explanation. Specify exactly what the student committed to (hours per week, specific deadlines, etc.). Use bold headers for key commitments."
+            "explanation": "Detailed explanation. **CRITICAL:** Provide comprehensive details about commitments made or explain why none were made.
+
+**Required format:**
+*   Start with 'Yes.' or 'No.' followed by a narrative sentence
+*   If YES: Use **bold headers** for different types of commitments (e.g., **Time commitment:**, **Deadline commitment:**, **Review commitment:**)
+*   If YES: Provide **2-4 bullet points** with specific quotes showing what the student committed to (hours per week, specific deadlines, measurable goals)
+*   If NO: Explain what was discussed instead and why no specific commitments were made. Mention any vague statements like 'I'll try' or 'I want to' that don't count as concrete commitments
+*   End with an 'Overall,' sentence
+
+**Valid commitments must be SPECIFIC and MEASURABLE:**
+*   ✅ 'I'll spend 5 hours per week', 'I'll complete module X by next week'
+*   ❌ 'I'll try my best', 'I want to build something' (too vague)"
         }},
         {{
             "question": "Did the mentor summarize the session, set expectations, and take clear commitments from the student on specific milestones?",
             "answer": "YES/NO/UNCLEAR",
-            "explanation": "Detailed explanation. **CRITICAL:** Check the END of the transcript. If the mentor did NOT explicitly summarize or ask for commitments, answer NO. Break this down into 'Summary', 'Expectations', and 'Commitments' using bold headers and each in separate bullet points."
+            "explanation": "Detailed explanation. **CRITICAL:** This question has THREE distinct parts - evaluate each separately. Check BOTH the end of the transcript AND the entire conversation. Break this down into three sections using bold headers:
+            
+**Summary:** Did the mentor explicitly recap/summarize what was discussed? This typically happens at the END of the session. If there was NO explicit summary statement (e.g., 'So to summarize...', 'Let me recap...'), state 'No formal summary was provided at the end of the session.' If there WAS a summary, list WHAT specific topics/points were recapped.
+
+**Expectations:** Did the mentor set expectations about learning pace, time commitment, focus areas, or approach? These can be set THROUGHOUT the conversation, not just at the end. Look for guidance like: 'You should spend X hours per week', 'Focus on these modules first', 'You can skip/speed through certain topics', 'This will take approximately X time'. List WHAT specific expectations were communicated with details (e.g., 'The mentor suggested limiting hands-on projects to save time' or 'The mentor recommended speeding through image generation modules').
+
+**Commitments:** Did the student commit to specific milestones, deadlines, or action items? Look for statements like: 'I'll complete X by next week', 'I commit to spending Y hours', 'I'll focus on Z first'. If the student made commitments, list them with specifics. If NO commitments were explicitly made, state 'No specific commitments or milestones were established.'
+
+**Overall Assessment:** After analyzing all three parts, provide a summary sentence starting with 'Overall,' that synthesizes whether the session had clear closure and actionable next steps."
         }},
         {{
             "question": "Did the mentor maintain a positive and professional tone throughout the session, without sharing negative remarks about AV or its courses?",
